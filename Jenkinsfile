@@ -28,11 +28,11 @@ stage('Deploy to Production') {
 
         sh 'npm install --omit=dev'
 
-        sh 'pm2 delete express-api || true'
+      sh '/usr/bin/pm2 delete express-api || true'
+sh '/usr/bin/pm2 start app.js --name express-api'
+sh '/usr/bin/pm2 save'
 
-        sh 'pm2 start app.js --name express-api'
-
-        sh 'pm2 save'
+    
     }
 }
     }
