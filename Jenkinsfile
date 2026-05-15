@@ -24,11 +24,13 @@ stage('Deploy to Production') {
     steps {
         echo 'Deploying application on Deploy Agent...'
         checkout scm 
-        sh 'npm install --only=production'
         
-        // Bypasses path lookup by invoking the underlying js engine file directly
-        sh 'node /usr/lib/node_modules/pm2/bin/pm2 delete express-api || true' 
-        sh 'node /usr/lib/node_modules/pm2/bin/pm2 start app.js --name express-api'
+        // Force the use of the absolute path to Node/NPM for the installation
+        sh '/usr/local/bin/npm install --only=production'
+        
+        // Force the use of the absolute path to the real PM2
+        sh '/usr/local/bin/pm2 delete express-api || true' 
+        sh '/usr/local/bin/pm2 start app.js --name express-api'
     }
 }
     }
