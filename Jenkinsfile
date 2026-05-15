@@ -1,11 +1,18 @@
 pipeline {
-    agent any // This allows it to run on the Master or Slave for now
+    agent any 
 
     stages {
-        stage('Hello GitHub') {
+        stage('Install Dependencies') {
             steps {
-                echo 'Successfully connected to GitHub!'
-                sh 'ls -ltr'
+                echo 'Installing NPM packages...'
+                // This runs inside your Master/Slave node
+                sh 'npm install' 
+            }
+        }
+        stage('Code Analysis') {
+            steps {
+                echo 'Checking files...'
+                sh 'ls -la'
             }
         }
     }
