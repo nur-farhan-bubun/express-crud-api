@@ -19,16 +19,16 @@ pipeline {
             }
         }
 
-      stage('Deploy to Production') {
+stage('Deploy to Production') {
     agent { label 'deploy-agent' }
     steps {
         echo 'Deploying application on Deploy Agent...'
         checkout scm 
         sh 'npm install --only=production'
         
-        // This explicitly adds the global npm binary path to this specific execution step
-        sh 'export PATH=$PATH:$(npm bin -g || echo "/usr/local/bin:/usr/bin"); pm2 delete express-api || true' 
-        sh 'export PATH=$PATH:$(npm bin -g || echo "/usr/local/bin:/usr/bin"); pm2 start app.js --name express-api'
+        // Bypasses path lookup by invoking the underlying js engine file directly
+        sh 'node /usr/lib/node_modules/pm2/bin/pm2 delete express-api || true' 
+        sh 'node /usr/lib/node_modules/pm2/bin/pm2 start app.js --name express-api'
     }
 }
     }
