@@ -24,12 +24,12 @@ stage('Deploy to Production') {
         echo 'Deploying application on Deploy Agent...'
         checkout scm 
         
-        // This works perfectly based on your logs
-        sh 'npm install --only=production'
-        
-        // Using npx bypasses the standard $PATH routing completely
-        sh 'npx pm2 delete express-api || true' 
-        sh 'npx pm2 start app.js --name express-api'
+        // This forces Jenkins to use your fresh Node 20 /usr/bin environment
+        withEnv(['PATH=/usr/bin:/usr/local/bin:/usr/sbin:/sbin:/bin']) {
+            sh 'npm install --only=production'
+            sh 'pm2 delete express-api || true' 
+            sh 'pm2 start app.js --name express-api'
+        }
     }
 }
     }
