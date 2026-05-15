@@ -19,20 +19,18 @@ pipeline {
             }
         }
 
-        stage('Deploy to Production') {
-            agent { label 'deploy-agent' } // Runs strictly on the deploy_agent
-            steps {
-                echo 'Deploying application on Deploy Agent...'
-                // Pulls fresh code onto the deployment machine
-                checkout scm 
-                sh 'npm install --only=production'
-                
-                // PM2 commands to cleanly restart your application without downtime
-                // '|| true' ensures the pipeline doesn't crash if the process isn't running yet
-                sh 'pm2 delete express-api || true' 
-                sh 'pm2 start app.js --name express-api'
-            }
-        }
+      stage('Deploy to Production') {
+    agent { label 'deploy-agent' }
+    steps {
+        echo 'Deploying application on Deploy Agent...'
+        checkout scm 
+        sh 'npm install --only=production'
+        
+        // This explicitly adds the global npm binary path to this specific execution step
+        sh 'export PATH=$PATH:$(npm bin -g || echo "/usr/local/bin:/usr/bin"); pm2 delete express-api || true' 
+        sh 'export PATH=$PATH:$(npm bin -g || echo "/usr/local/bin:/usr/bin"); pm2 start app.js --name express-api'
+    }
+}
     }
     
     post {
