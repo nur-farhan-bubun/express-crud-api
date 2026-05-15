@@ -24,12 +24,12 @@ stage('Deploy to Production') {
         echo 'Deploying application on Deploy Agent...'
         checkout scm 
         
-        // This forces Jenkins to use your fresh Node 20 /usr/bin environment
-        withEnv(['PATH=/usr/bin:/usr/local/bin:/usr/sbin:/sbin:/bin']) {
-            sh 'npm install --only=production'
-            sh 'pm2 delete express-api || true' 
-            sh 'pm2 start app.js --name express-api'
-        }
+        // This ensures the local dependencies install correctly
+        sh 'npm install --only=production'
+        
+        // This forces the Node 20 engine to run the modern PM2 script directly
+        sh '/usr/bin/node /usr/lib/node_modules/pm2/bin/pm2 delete express-api || true' 
+        sh '/usr/bin/node /usr/lib/node_modules/pm2/bin/pm2 start app.js --name express-api'
     }
 }
     }
