@@ -18,19 +18,18 @@ pipeline {
                 // sh 'npm test' // Uncomment this if you have test scripts configured
             }
         }
-
 stage('Deploy to Production') {
     agent { label 'deploy-agent' }
     steps {
         echo 'Deploying application on Deploy Agent...'
         checkout scm 
         
-        // 1. Run npm install using its absolute path
-        sh '/usr/bin/npm install --only=production'
+        // This works perfectly based on your logs
+        sh 'npm install --only=production'
         
-        // 2. Run PM2 commands using their absolute paths
-        sh '/usr/bin/pm2 delete express-api || true' 
-        sh '/usr/bin/pm2 start app.js --name express-api'
+        // Using npx bypasses the standard $PATH routing completely
+        sh 'npx pm2 delete express-api || true' 
+        sh 'npx pm2 start app.js --name express-api'
     }
 }
     }
